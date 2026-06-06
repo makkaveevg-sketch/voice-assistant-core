@@ -212,10 +212,3 @@ if __name__ == "__main__":
         print(command)
         print(result)
         print("-" * 50)
-processor = LLMProcessor()
-
-print(
-    processor.process_command(
-        "открой дискорд"
-    )
-)
