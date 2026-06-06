@@ -5,39 +5,78 @@ import re
 
 class LLMProcessor:
 
-    ALLOWED_ACTIONS = {
-        "open_app",
-        "close_app",
-        "shutdown_pc",
-        "restart_pc",
-        "open_url",
-        "unknown"
-    }
-
     def __init__(self):
+
         self.model = "qwen3:8b"
 
+        self.aliases = {
+            "дискорд": "discord",
+            "дис": "discord",
+            "discord": "discord",
+
+            "ютуб": "youtube",
+            "youtube": "youtube",
+            "yt": "youtube",
+
+            "телеграм": "telegram",
+            "телега": "telegram",
+            "tg": "telegram"
+        }
+
         self.system_prompt = """
-Ты модуль голосового ассистента Windows.
+Ты модуль определения действий голосового ассистента Windows.
 
-Ты ВОЗВРАЩАЕШЬ ТОЛЬКО JSON.
+Твоя задача — преобразовывать команды пользователя в JSON.
 
-ПРИМЕРЫ КОМАНД И ОТВЕТОВ:
+ОТВЕЧАЙ ТОЛЬКО ВАЛИДНЫМ JSON.
 
-Команда: Открой Telegram
-Команда: Запусти Telegram
-Команда: Открой мессенджер Telegram
+Не добавляй:
+- пояснения
+- markdown
+- комментарии
+- текст до JSON
+- текст после JSON
+
+Используй только действия:
+
+open_app
+close_app
+open_url
+shutdown_pc
+restart_pc
+unknown
+
+Формат ответа:
+
+{
+  "action": "...",
+  "parameters": {}
+}
+
+Примеры:
+
+Команда: Открой Discord
+
 Ответ:
 {
-  "action": "open_url",
+  "action": "open_app",
   "parameters": {
-    "url": "https://web.telegram.org"
+    "app_name": "discord"
+  }
+}
+
+Команда: Закрой Discord
+
+Ответ:
+{
+  "action": "close_app",
+  "parameters": {
+    "app_name": "discord"
   }
 }
 
 Команда: Открой YouTube
-Команда: Запусти ютуб
-Команда: Включи YouTube
+
 Ответ:
 {
   "action": "open_url",
@@ -46,18 +85,8 @@ class LLMProcessor:
   }
 }
 
-Команда: Открой Google
-Команда: Запусти браузер
-Ответ:
-{
-  "action": "open_url",
-  "parameters": {
-    "url": "https://google.com"
-  }
-}
-
 Команда: Выключи компьютер
-Команда: Заверши работу ПК
+
 Ответ:
 {
   "action": "shutdown_pc",
@@ -65,114 +94,128 @@ class LLMProcessor:
 }
 
 Команда: Перезагрузи компьютер
+
 Ответ:
 {
   "action": "restart_pc",
   "parameters": {}
 }
 
-Команда: Закрой Telegram
-Ответ:
-{
-  "action": "unknown",
-  "parameters": {}
-}
-
-Команда: Включи музыку
 Команда: Сделай что-нибудь
+
 Ответ:
-{
-  "action": "unknown",
-  "parameters": {}
-}
-
-Допустимые действия:
-open_app, close_app, shutdown_pc, restart_pc, open_url, unknown
-
-Если команда неизвестна → unknown
-ПРАВИЛА:
-
-1. Если action = open_app → ОБЯЗАТЕЛЬНО укажи:
-   parameters.app_name
-
-2. Если action = close_app → ОБЯЗАТЕЛЬНО укажи:
-   parameters.app_name
-
-3. Если action = open_url → ОБЯЗАТЕЛЬНО укажи:
-   parameters.url
-
-4. parameters НИКОГДА не должен быть пустым, если action требует данные.
-
-5. Если не можешь определить параметры → возвращай:
 {
   "action": "unknown",
   "parameters": {}
 }
 """
 
-    # 🔥 1. вытаскиваем JSON даже из текста
     def extract_json(self, text):
+
         match = re.search(r"\{.*\}", text, re.DOTALL)
-        if not match:
-            return None
-        return match.group(0)
 
-    # 🔥 2. валидация структуры
-    def validate(self, data):
-        if not isinstance(data, dict):
-            return False
+        if match:
+            return match.group(0)
 
-        if "action" not in data:
-            return False
+        return None
 
-        if "parameters" not in data:
-            return False
+    def normalize_text(self, text):
 
-        if data["action"] not in self.ALLOWED_ACTIONS:
-            data["action"] = "unknown"
-            data["parameters"] = {}
+        return text.lower().strip()
 
-        return True
+    def normalize_app_name(self, app_name):
 
-    # 🔥 3. основной метод
+        if not app_name:
+            return app_name
+
+        app_name = app_name.lower().strip()
+
+        if app_name in self.aliases:
+            return self.aliases[app_name]
+
+        return app_name
+
     def process_command(self, text):
 
-        for attempt in range(2):  # retry
+        text = self.normalize_text(text)
 
-            response = chat(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": text}
-                ]
-            )
+        response = chat(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": self.system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": text
+                }
+            ]
+        )
 
-            content = response["message"]["content"]
+        content = response["message"]["content"]
 
-            json_str = self.extract_json(content)
+        json_str = self.extract_json(content)
 
-            if not json_str:
-                continue
-
-            try:
-                data = json.loads(json_str)
-
-                if self.validate(data):
-                    return data
-
-            except json.JSONDecodeError:
-                continue
-
-        # fallback если всё сломалось
-        return {
-            "action": "error",
-            "parameters": {
-                "reason": "failed_to_parse_llm_output"
+        if not json_str:
+            return {
+                "action": "unknown",
+                "parameters": {}
             }
-        }
+
+        try:
+
+            data = json.loads(json_str)
+
+            if "action" not in data:
+                return {
+                    "action": "unknown",
+                    "parameters": {}
+                }
+
+            if "parameters" not in data:
+                data["parameters"] = {}
+
+            if "app_name" in data["parameters"]:
+                data["parameters"]["app_name"] = (
+                    self.normalize_app_name(
+                        data["parameters"]["app_name"]
+                    )
+                )
+
+            return data
+
+        except json.JSONDecodeError:
+
+            return {
+                "action": "unknown",
+                "parameters": {}
+            }
+
+
+if __name__ == "__main__":
+
+    processor = LLMProcessor()
+
+    tests = [
+        "открой дискорд",
+        "закрой дискорд",
+        "открой ютуб",
+        "выключи компьютер",
+        "перезагрузи компьютер"
+    ]
+
+    for command in tests:
+
+        result = processor.process_command(command)
+
+        print(command)
+        print(result)
+        print("-" * 50)
 processor = LLMProcessor()
 
-print(processor.process_command("Открой Telegram"))
-print(processor.process_command("Выключи компьютер"))
-print(processor.process_command("Включи музыку"))
-print(processor.process_command("Запусти телеграм"))
+print(
+    processor.process_command(
+        "открой дискорд"
+    )
+)
