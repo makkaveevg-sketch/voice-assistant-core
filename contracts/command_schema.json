@@ -1,0 +1,8 @@
+{
+  "action": "open | close | shutdown_pc | restart_pc | scenario | unknown",
+  "parameters": {
+    "target": "string",
+    "url": "string",
+    "name": "string"
+  }
+}
