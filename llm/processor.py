@@ -20,7 +20,19 @@ class LLMProcessor:
 
             "телеграм": "telegram",
             "телега": "telegram",
-            "tg": "telegram"
+            "tg": "telegram",
+            
+            "стим": "steam",
+            "стимчик": "steam",
+            
+            "хром": "chrome",
+            "гугл хром": "chrome",
+            "гугл": "chrome",
+            
+            "яндекс": "yandex",
+            
+            "вс код": "vscode",
+            "визуал студио код": "vscode"
         }
 
         self.system_prompt = """
