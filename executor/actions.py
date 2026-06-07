@@ -4,11 +4,18 @@ import webbrowser
 from executor import config
 
 def open_app(app_name):
+
     path = config.APPS.get(app_name.lower())
-    if path:
-       subprocess.Popen(f'"{path}"', shell=True)
-    return f"Запускаю {app_name}"
-    return f"Приложение {app_name} не настроено в config.py"
+
+    if not path:
+        return f"Приложение {app_name} не настроено в config.py"
+
+    try:
+        subprocess.Popen(path, shell=True)
+        return f"Запускаю {app_name}"
+
+    except Exception as e:
+        return f"Ошибка запуска: {e}"
 
 def close_app(app_name):
     # Команда taskkill принудительно закрывает процесс по имени
