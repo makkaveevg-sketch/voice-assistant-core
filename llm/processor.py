@@ -32,7 +32,12 @@ class LLMProcessor:
             "яндекс": "yandex",
             
             "вс код": "vscode",
-            "визуал студио код": "vscode"
+            "визуал студио код": "vscode",
+            
+            "музыка": "music",
+            
+            "githab": "githab",
+            "гитхаб": "githab"
         }
 
         self.system_prompt = """
