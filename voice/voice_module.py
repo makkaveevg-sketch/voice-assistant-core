@@ -77,7 +77,7 @@ class VoiceModule:
 
     def _run_callback(self, text):
         bot_answer = self.llm_callback(text)
-        print(f"🔊 [Вик]: {bot_answer}")
+        print(f"🔊 [Джарвис]: {bot_answer}")
         self.speak(bot_answer)
 
     def start_listening(self, llm_function):
