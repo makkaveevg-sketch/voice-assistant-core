@@ -37,7 +37,11 @@ class LLMProcessor:
             "музыка": "music",
             
             "githab": "githab",
-            "гитхаб": "githab"
+            "гитхаб": "githab",
+            
+            "запрет": "zapret",
+            
+            "запрет 9": "zapret  9"
         }
 
         self.system_prompt = """
@@ -124,6 +128,16 @@ unknown
 {
   "action": "unknown",
   "parameters": {}
+}
+
+Команда: Запусти запрет
+
+Ответ:
+{
+  "action": "open_app",
+  "parameters": {
+    "app_name": "zapret"
+  }
 }
 """
 

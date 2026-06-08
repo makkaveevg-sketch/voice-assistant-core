@@ -1,5 +1,5 @@
 import json
-import actions
+from executor import actions
 
 
 def process_command(json_input):
