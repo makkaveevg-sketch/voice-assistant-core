@@ -3,7 +3,6 @@ import subprocess
 import webbrowser
 import config
 
-<<<<<<< HEAD
 def open_app(app_name, as_admin=False):
     path = config.APPS.get(app_name.lower())
     if path:
@@ -20,21 +19,8 @@ def open_app(app_name, as_admin=False):
         except Exception as e:
             return f"Ошибка при запуске: {e}"
     return f"Приложение {app_name} не найдено в конфиге"
-=======
-def open_app(app_name):
 
-    path = config.APPS.get(app_name.lower())
 
-    if not path:
-        return f"Приложение {app_name} не настроено в config.py"
-
-    try:
-        subprocess.Popen(path, shell=True)
-        return f"Запускаю {app_name}"
-
-    except Exception as e:
-        return f"Ошибка запуска: {e}"
->>>>>>> b8db0378b26d143afa444cf57665861df5c59695
 
 def close_app(app_name):
     path = config.APPS.get(app_name.lower())

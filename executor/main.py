@@ -1,6 +1,8 @@
 import json
 import actions
 
+
+
 def process_command(json_input):
     try:
         data = json.loads(json_input)
@@ -9,9 +11,8 @@ def process_command(json_input):
         
         if action == "open_app":
             app_name = params.get("app_name")
-            is_admin = params.get("run_as_admin", False) # Проверяем, нужны ли права
+            is_admin = params.get("as_admin", False) # Проверяем, нужны ли права
 
-            actions.open_app(params.get("app_name"), as_admin=is_admin)
             return actions.open_app(app_name, as_admin=is_admin)
             
         elif action == "close_app":
@@ -34,8 +35,8 @@ def process_command(json_input):
 
 if __name__ == "__main__":
 
-    #test_open_app = '{"action": "open_app", "parameters": {"app_name": "discord"}}'
-    test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "run_as_admin": true}}'
-    #test_open_url = '{"action": "open_url", "parameters": {"url": "github"}}'
+    #test_open_app = '{"action": "open_app", "parameters": {"app_name": "telegram"}}'
+    test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "as_admin": true}}'
+    #test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
     #test_close_app = '{"action": "close_app", "parameters": {"app_name": "discord"}}'
     print(process_command(test_zapret))
