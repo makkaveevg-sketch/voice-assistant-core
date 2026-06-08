@@ -2,7 +2,6 @@ import json
 import actions
 
 
-
 def process_command(json_input):
     try:
         data = json.loads(json_input)
@@ -28,7 +27,7 @@ def process_command(json_input):
             return action.restart_pc()
             
         else:
-            return "Ошибка: Неизвестное действие (action)"
+            return "Действие нераспознанно"
             
     except Exception as e:
         return f"Ошибка парсинга JSON: {e}"
@@ -36,7 +35,7 @@ def process_command(json_input):
 if __name__ == "__main__":
 
     #test_open_app = '{"action": "open_app", "parameters": {"app_name": "discord"}}'
-    test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "as_admin": true}}'
-    #test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
+    #test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "as_admin": true}}'
+    test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
     #test_close_app = '{"action": "close_app", "parameters": {"app_name": "discord"}}'
-    print(process_command(test_zapret))
+    print(process_command(test_open_url))
