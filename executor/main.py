@@ -28,7 +28,7 @@ def process_command(json_input):
             return actions.shutdown_pc()
             
         elif action == "restart_pc":
-            return action.restart_pc()
+            return actions.restart_pc()
             
         else:
             return "Действие нераспознанно"
