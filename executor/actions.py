@@ -1,25 +1,38 @@
 import os
 import subprocess
 import webbrowser
-from executor import config
+import config
 
-def open_app(app_name):
+def open_app(app_name, as_admin=False):
     path = config.APPS.get(app_name.lower())
     if path:
-       subprocess.Popen(f'"{path}"', shell=True)
-    return f"Запускаю {app_name}"
-    return f"Приложение {app_name} не настроено в config.py"
+        try:
+            # Если as_admin=True, используем операцию 'runas' (запрос прав админа)
+            # Если False, используем обычное открытие
+            operation = 'runas' if as_admin else 'open'
+            
+            # Получаем папку файла, чтобы батник не "терял" свои ресурсы
+            cwd = os.path.dirname(path)
+            
+            os.startfile(path, operation, cwd=cwd)
+            return f"Выполнено: {app_name} запущен (Админ: {as_admin})"
+        except Exception as e:
+            return f"Ошибка при запуске: {e}"
+    return f"Приложение {app_name} не найдено в конфиге"
 
 def close_app(app_name):
-    # Команда taskkill принудительно закрывает процесс по имени
-    # /F - принудительно, /IM - имя образа (exe файла)
-    # Мы берем имя из конфига (например, 'notepad.exe')
     path = config.APPS.get(app_name.lower())
     if path:
-        exe_name = path.split('\\')[-1].split(' ')[0] # вытаскиваем только имя файла .exe
+
+        if "discord" in app_name.lower():
+            exe_name = "Discord.exe"
+        else:
+            full_name = os.path.basename(path)
+            exe_name = full_name.split(' ')[0] 
+        
         os.system(f"taskkill /f /im {exe_name}")
-        return f"Закрываю {app_name}"
-    return "Не удалось определить имя процесса для закрытия"
+        return f"Попытка закрыть {exe_name} выполнена"
+    return "Не удалось найти приложение в конфиге"
 
 def open_url(url):
     webbrowser.open(url)
