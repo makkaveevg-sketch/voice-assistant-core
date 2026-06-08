@@ -1,9 +1,5 @@
 import json
 from executor import actions
-<<<<<<< HEAD
-=======
-
->>>>>>> 5a4d3f5df8c0e9af9636d5998035cace57846ebc
 
 def process_command(json_input):
     try:
