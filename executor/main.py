@@ -25,7 +25,7 @@ def process_command(json_input):
             return actions.shutdown_pc()
             
         elif action == "restart_pc":
-            return actions.restart_pc()
+            return action.restart_pc()
             
         else:
             return "Ошибка: Неизвестное действие (action)"
@@ -35,7 +35,7 @@ def process_command(json_input):
 
 if __name__ == "__main__":
 
-    #test_open_app = '{"action": "open_app", "parameters": {"app_name": "telegram"}}'
+    #test_open_app = '{"action": "open_app", "parameters": {"app_name": "discord"}}'
     test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "as_admin": true}}'
     #test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
     #test_close_app = '{"action": "close_app", "parameters": {"app_name": "discord"}}'
