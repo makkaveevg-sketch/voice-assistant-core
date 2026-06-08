@@ -11,7 +11,7 @@ class LLMProcessor:
 
         self.aliases = {
             "дискорд": "discord",
-            "дис": "discord",
+            "дс": "discord",
             "discord": "discord",
 
             "ютуб": "youtube",
