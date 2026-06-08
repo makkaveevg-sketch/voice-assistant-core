@@ -1,7 +1,7 @@
 import os
 import subprocess
 import webbrowser
-import config
+from executor import config
 
 def open_app(app_name, as_admin=False):
     path = config.APPS.get(app_name.lower())

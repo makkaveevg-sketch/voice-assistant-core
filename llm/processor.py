@@ -129,6 +129,16 @@ unknown
   "action": "unknown",
   "parameters": {}
 }
+
+Команда: Запусти запрет
+
+Ответ:
+{
+  "action": "open_app",
+  "parameters": {
+    "app_name": "zapret"
+  }
+}
 """
 
     def extract_json(self, text):
