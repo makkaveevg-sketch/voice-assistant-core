@@ -5,7 +5,6 @@ from executor import actions
 
 >>>>>>> 5a4d3f5df8c0e9af9636d5998035cace57846ebc
 
-
 def process_command(json_input):
     try:
         data = json.loads(json_input)
