@@ -19,6 +19,6 @@ def vik_logic(user_text):
 
 voice = VoiceModule()
 
-voice.start_listening(
-llm_function=vik_logic
-)        
+voice.start_wake_mode(
+    llm_function=vik_logic
+)
