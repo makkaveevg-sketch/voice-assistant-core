@@ -7,7 +7,8 @@ import numpy as np
 import sounddevice as sd
 import pygame
 
-from gtts import gTTS
+import asyncio
+import edge_tts
 from faster_whisper import WhisperModel
 
 
@@ -51,14 +52,18 @@ class VoiceModule:
         if not text:
             return
 
-        temp_path = "C:\\Jarvis_Voice\\temp_voice.mp3"
+        temp_path = "temp_voice.mp3"
 
-        tts = gTTS(
-            text=text,
-            lang="ru"
-        )
+        async def generate_voice():
 
-        tts.save(temp_path)
+            communicate = edge_tts.Communicate(
+                text=text,
+                voice="ru-RU-DmitryNeural"
+            )
+
+            await communicate.save(temp_path)
+
+        asyncio.run(generate_voice())
 
         pygame.mixer.init()
 
@@ -72,10 +77,10 @@ class VoiceModule:
         pygame.mixer.quit()
 
         try:
-            os.remove(temp_path)
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
         except:
             pass
-
     def _transcribe_audio(self):
 
         if not os.path.exists(self.wav_path):
