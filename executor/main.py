@@ -1,9 +1,5 @@
 import json
 from executor import actions
-<<<<<<< HEAD
-=======
-
->>>>>>> 5a4d3f5df8c0e9af9636d5998035cace57846ebc
 
 
 def process_command(json_input):
@@ -38,8 +34,8 @@ def process_command(json_input):
 
 if __name__ == "__main__":
 
-    #test_open_app = '{"action": "open_app", "parameters": {"app_name": "discord"}}'
+    test_open_app = '{"action": "open_app", "parameters": {"app_name": "discord"}}'
     #test_zapret = '{"action": "open_app", "parameters": {"app_name": "zapret", "as_admin": true}}'
-    test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
+    #test_open_url = '{"action": "open_url", "parameters": {"url": "youtube"}}'
     #test_close_app = '{"action": "close_app", "parameters": {"app_name": "discord"}}'
-    print(process_command(test_open_url))
+    print(process_command(test_open_app))

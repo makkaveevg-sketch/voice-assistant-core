@@ -7,18 +7,21 @@ def open_app(app_name, as_admin=False):
     path = config.APPS.get(app_name.lower())
     if path:
         try:
-            # Если as_admin=True, используем операцию 'runas' (запрос прав админа)
-            # Если False, используем обычное открытие
-            operation = 'runas' if as_admin else 'open'
-            
-            # Получаем папку файла, чтобы батник не "терял" свои ресурсы
-            cwd = os.path.dirname(path)
-            
-            os.startfile(path, operation, cwd=cwd)
-            return f"Выполнено: {app_name} запущен (Админ: {as_admin})"
+            # Если в пути есть пробел и это не системная команда, 
+            # используем shell=True через subprocess для сложных путей с аргументами
+            if "--" in path or "/" in path:
+                operation = "runas" if as_admin else None
+                # Для сложных путей с аргументами лучше подходит subprocess
+                subprocess.Popen(path, shell=True)
+                return f"Вик: Запускаю {app_name} с аргументами"
+            else:
+                # Для обычных путей и .bat оставляем надежный startfile
+                operation = "runas" if as_admin else "open"
+                os.startfile(path, operation)
+                return f"Вик: {app_name} запущен"
         except Exception as e:
-            return f"Ошибка при запуске: {e}"
-    return f"Приложение {app_name} не найдено в конфиге"
+            return f"Ошибка запуска: {e}"
+    return "Приложение не найдено"
 
 
 
