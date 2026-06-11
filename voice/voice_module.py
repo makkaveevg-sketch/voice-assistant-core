@@ -130,7 +130,7 @@ class VoiceModule:
 
             result = self.llm_callback(text)
 
-            print(f"🔊 [Джарвис]: {result}")
+            print(f"🔊 [Вик]: {result}")
 
             self.speak(str(result))
 
