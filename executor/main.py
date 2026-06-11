@@ -1,6 +1,9 @@
 import json
 from executor import actions
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3b5f3784200bc518ca45c83a81d108f66f5d5fc9
 
 def process_command(json_input):
     try:
@@ -24,7 +27,7 @@ def process_command(json_input):
             return actions.shutdown_pc()
             
         elif action == "restart_pc":
-            return action.restart_pc()
+            return actions.restart_pc()
             
         else:
             return "Действие нераспознанно"
